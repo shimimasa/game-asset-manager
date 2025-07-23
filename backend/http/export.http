@@ -1,0 +1,60 @@
+### Export API Tests
+
+@baseUrl = http://localhost:3000/api
+@authToken = YOUR_AUTH_TOKEN_HERE
+
+### Export entire project
+POST {{baseUrl}}/export/projects/PROJECT_ID_HERE
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "options": {
+    "imageFormat": "webp",
+    "audioFormat": "mp3",
+    "includeMetadata": true,
+    "skipErrors": false
+  }
+}
+
+### Export project with default options
+POST {{baseUrl}}/export/projects/PROJECT_ID_HERE
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{}
+
+### Export selected assets
+POST {{baseUrl}}/export/assets
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "assetIds": [
+    "ASSET_ID_1",
+    "ASSET_ID_2",
+    "ASSET_ID_3"
+  ],
+  "options": {
+    "imageFormat": "jpg",
+    "audioFormat": "wav",
+    "includeMetadata": false
+  }
+}
+
+### Export assets with format conversion
+POST {{baseUrl}}/export/assets
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "assetIds": ["ASSET_ID_HERE"],
+  "options": {
+    "imageFormat": "png",
+    "skipErrors": true
+  }
+}
+
+### Get export status
+GET {{baseUrl}}/export/EXPORT_ID_HERE
+Authorization: Bearer {{authToken}}

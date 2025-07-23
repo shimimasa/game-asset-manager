@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザーモデル
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  username     String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  // Relations
+  assets       Asset[]
+  prompts      Prompt[]
+  projects     Project[]
+  
+  @@index([email])
+  @@index([username])
+}
+
+// アセットモデル
+model Asset {
+  id           String   @id @default(cuid())
+  filename     String
+  originalName String
+  fileType     FileType
+  mimeType     String
+  fileSize     Int
+  storageUrl   String
+  thumbnailUrl String?
+  metadata     Json?    // width, height, duration, bitrate等
+  tags         String[]
+  category     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  promptId     String?
+  prompt       Prompt?  @relation(fields: [promptId], references: [id], onDelete: SetNull)
+  projects     ProjectAsset[]
+  
+  @@index([userId])
+  @@index([fileType])
+  @@index([category])
+  @@index([tags])
+  @@index([createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([fileType, userId])
+  @@index([promptId])
+}
+
+// プロンプトモデル
+model Prompt {
+  id          String      @id @default(cuid())
+  title       String
+  content     String      @db.Text
+  type        PromptType
+  parameters  Json?       // style, quality, duration等のパラメータ
+  category    String?
+  usageCount  Int         @default(0)
+  successRate Float       @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets      Asset[]
+  executions  PromptExecution[]
+  
+  @@index([userId])
+  @@index([type])
+  @@index([category])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([type, userId])
+  @@index([usageCount(sort: Desc)])
+}
+
+// プロンプト実行履歴
+model PromptExecution {
+  id          String      @id @default(cuid())
+  status      ExecutionStatus
+  startedAt   DateTime    @default(now())
+  completedAt DateTime?
+  error       String?
+  resultData  Json?
+  
+  // Relations
+  promptId    String
+  prompt      Prompt      @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  
+  @@index([promptId])
+  @@index([status])
+  @@index([promptId, startedAt(sort: Desc)])
+  @@index([status, startedAt(sort: Desc)])
+}
+
+// プロジェクトモデル
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets      ProjectAsset[]
+  
+  @@index([userId])
+  @@index([name])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, name])
+}
+
+// プロジェクトとアセットの中間テーブル
+model ProjectAsset {
+  id        String   @id @default(cuid())
+  addedAt   DateTime @default(now())
+  
+  // Relations
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assetId   String
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  
+  @@unique([projectId, assetId])
+  @@index([projectId])
+  @@index([assetId])
+}
+
+// 監査ログモデル
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String
+  userId      String?
+  resourceId  String?
+  resourceType String?
+  ipAddress   String
+  userAgent   String?
+  metadata    Json     @default("{}")
+  success     Boolean
+  errorMessage String?
+  timestamp   DateTime @default(now())
+  
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+  @@index([ipAddress])
+}
+
+// Enums
+enum FileType {
+  IMAGE
+  AUDIO
+}
+
+enum PromptType {
+  IMAGE
+  AUDIO
+}
+
+enum ExecutionStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}

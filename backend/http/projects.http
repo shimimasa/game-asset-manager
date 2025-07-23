@@ -1,0 +1,65 @@
+### Project API Tests
+
+@baseUrl = http://localhost:3000/api
+@authToken = YOUR_AUTH_TOKEN_HERE
+
+### Create a new project
+POST {{baseUrl}}/projects
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "My Game Assets",
+  "description": "Assets for my JavaScript learning game"
+}
+
+### Get all projects
+GET {{baseUrl}}/projects
+Authorization: Bearer {{authToken}}
+
+### Search projects
+GET {{baseUrl}}/projects?search=game&limit=10
+Authorization: Bearer {{authToken}}
+
+### Get a specific project
+GET {{baseUrl}}/projects/PROJECT_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Update a project
+PUT {{baseUrl}}/projects/PROJECT_ID_HERE
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated Game Assets",
+  "description": "Updated description for my game assets"
+}
+
+### Delete a project
+DELETE {{baseUrl}}/projects/PROJECT_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Duplicate a project
+POST {{baseUrl}}/projects/PROJECT_ID_HERE/duplicate
+Authorization: Bearer {{authToken}}
+
+### Add asset to project
+POST {{baseUrl}}/projects/PROJECT_ID_HERE/assets
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "assetId": "ASSET_ID_HERE"
+}
+
+### Get project assets
+GET {{baseUrl}}/projects/PROJECT_ID_HERE/assets
+Authorization: Bearer {{authToken}}
+
+### Get project assets with pagination
+GET {{baseUrl}}/projects/PROJECT_ID_HERE/assets?limit=20&offset=0
+Authorization: Bearer {{authToken}}
+
+### Remove asset from project
+DELETE {{baseUrl}}/projects/PROJECT_ID_HERE/assets/ASSET_ID_HERE
+Authorization: Bearer {{authToken}}

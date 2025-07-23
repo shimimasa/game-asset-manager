@@ -1,0 +1,84 @@
+### Asset API Testing File
+### Use with VS Code REST Client extension or similar tools
+
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
+
+### First, login to get access token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "testpassword123"
+}
+
+### Get access token from login response
+@accessToken = {{login.response.body.data.accessToken}}
+
+### Upload an asset (requires actual file - use Postman or similar for file upload)
+# Note: This endpoint requires multipart/form-data with a file
+# POST {{baseUrl}}/assets/upload
+# Authorization: Bearer {{accessToken}}
+# Content-Type: multipart/form-data
+# 
+# file: [Select file]
+# tags: ["game", "character", "sprite"]
+# category: "Characters"
+
+### Get presigned upload URL
+POST {{baseUrl}}/assets/upload-url
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "filename": "test-image.png",
+  "mimeType": "image/png"
+}
+
+### Get all assets
+GET {{baseUrl}}/assets
+Authorization: Bearer {{accessToken}}
+
+### Get assets with pagination
+GET {{baseUrl}}/assets?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+### Get assets filtered by file type
+GET {{baseUrl}}/assets?fileType=IMAGE
+Authorization: Bearer {{accessToken}}
+
+### Get assets filtered by category
+GET {{baseUrl}}/assets?category=Characters
+Authorization: Bearer {{accessToken}}
+
+### Get assets filtered by tags
+GET {{baseUrl}}/assets?tags=character&tags=sprite
+Authorization: Bearer {{accessToken}}
+
+### Search assets
+GET {{baseUrl}}/assets?search=warrior
+Authorization: Bearer {{accessToken}}
+
+### Get assets sorted by name
+GET {{baseUrl}}/assets?sortBy=originalName&sortOrder=asc
+Authorization: Bearer {{accessToken}}
+
+### Get single asset (replace with actual asset ID)
+GET {{baseUrl}}/assets/clxxxxxxxxxxxxx
+Authorization: Bearer {{accessToken}}
+
+### Update asset metadata (replace with actual asset ID)
+PUT {{baseUrl}}/assets/clxxxxxxxxxxxxx
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "tags": ["updated", "character", "hero"],
+  "category": "Heroes"
+}
+
+### Delete asset (replace with actual asset ID)
+DELETE {{baseUrl}}/assets/clxxxxxxxxxxxxx
+Authorization: Bearer {{accessToken}}

@@ -1,0 +1,122 @@
+### Prompt API Tests
+
+@baseUrl = http://localhost:3000/api
+@authToken = YOUR_AUTH_TOKEN_HERE
+
+### Create a new prompt (IMAGE)
+POST {{baseUrl}}/prompts
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Fantasy Landscape Generator",
+  "content": "Create a stunning fantasy landscape with mountains, forests, and magical elements",
+  "type": "IMAGE",
+  "parameters": {
+    "style": "digital art",
+    "resolution": "1024x1024",
+    "quality": "high"
+  }
+}
+
+### Create a new prompt (AUDIO)
+POST {{baseUrl}}/prompts
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Epic Battle Music",
+  "content": "Compose an epic orchestral battle music with drums and brass instruments",
+  "type": "AUDIO",
+  "parameters": {
+    "duration": 120,
+    "genre": "orchestral",
+    "mood": "intense"
+  }
+}
+
+### Get all prompts
+GET {{baseUrl}}/prompts
+Authorization: Bearer {{authToken}}
+
+### Get prompts with filters
+GET {{baseUrl}}/prompts?type=IMAGE&limit=10&orderBy=usageCount&order=desc
+Authorization: Bearer {{authToken}}
+
+### Search prompts
+GET {{baseUrl}}/prompts?search=fantasy&limit=5
+Authorization: Bearer {{authToken}}
+
+### Get a specific prompt
+GET {{baseUrl}}/prompts/PROMPT_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Update a prompt
+PUT {{baseUrl}}/prompts/PROMPT_ID_HERE
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Updated Fantasy Landscape Generator",
+  "content": "Create a stunning fantasy landscape with mountains, forests, magical elements, and floating islands",
+  "parameters": {
+    "style": "digital art",
+    "resolution": "2048x2048",
+    "quality": "ultra"
+  }
+}
+
+### Clone a prompt
+POST {{baseUrl}}/prompts/PROMPT_ID_HERE/clone
+Authorization: Bearer {{authToken}}
+
+### Delete a prompt
+DELETE {{baseUrl}}/prompts/PROMPT_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Execute a prompt (Image Generation)
+POST {{baseUrl}}/prompts/PROMPT_ID_HERE/execute
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "parameters": {
+    "size": "1024x1024",
+    "quality": "hd",
+    "style": "vivid"
+  }
+}
+
+### Execute a prompt (Audio Generation)
+POST {{baseUrl}}/prompts/PROMPT_ID_HERE/execute
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "parameters": {
+    "duration": 120,
+    "genre": "electronic",
+    "mood": "upbeat",
+    "instruments": ["synthesizer", "drums", "bass"]
+  }
+}
+
+### Get all executions
+GET {{baseUrl}}/prompts/executions
+Authorization: Bearer {{authToken}}
+
+### Get executions for a specific prompt
+GET {{baseUrl}}/prompts/executions?promptId=PROMPT_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Get executions by status
+GET {{baseUrl}}/prompts/executions?status=COMPLETED&limit=10
+Authorization: Bearer {{authToken}}
+
+### Get a specific execution
+GET {{baseUrl}}/prompts/executions/EXECUTION_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Cancel an execution
+DELETE {{baseUrl}}/prompts/executions/EXECUTION_ID_HERE
+Authorization: Bearer {{authToken}}
